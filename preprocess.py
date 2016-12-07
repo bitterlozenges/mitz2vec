@@ -6,20 +6,20 @@ USER = "user_id"
 BIZ = "business_id"
 
 if len(sys.argv) != 2:
-  print "Usage: python preprocess.py filename.json"
+  print("Usage: python preprocess.py filename.json")
   sys.exit(-1)
 
 fname = sys.argv[1]
 
 if fname[-5:] != ".json":
-  print "file must have extension '.json'"
+  print("file must have extension '.json'")
   sys.exit(-2)
 
 fprefix = fname[:-5]
 
 
 
-print "Constructing map - reviewer: business"
+print("Constructing map - reviewer: business")
 # user_id: business_id
 dct = {}
 # because Yelp doesn't have properly formatted json files
@@ -34,11 +34,11 @@ with open(fname) as f:
     dct[user].append(business)
 
 
-print "Constructing map - business: business, weight"
+print("Constructing map - business: business, weight")
 # b1: {b2: weight2, b3:weight3}
 bizzes = {}
 # collate results
-for _, blist in dct.iteritems():
+for _, blist in dct.items():
   for b1 in blist:
     for b2 in blist:
       # document pair (b1, b2)
@@ -50,13 +50,13 @@ for _, blist in dct.iteritems():
         bizzes[b1][b2] = 0
       bizzes[b1][b2] += 1
 
-print "Writing to file"
+print("Writing to file")
 # write to file
 with open(fprefix + ".txt",'w') as f:
   # header for weighted graph
   f.write("1\n")
-  for b1, b_dict in bizzes.iteritems():
+  for b1, b_dict in bizzes.items():
      f.write(b1)
-     for b2, w2 in b_dict.iteritems():
+     for b2, w2 in b_dict.items():
        f.write(" " + b2 + " " + str(w2))
      f.write("\n")

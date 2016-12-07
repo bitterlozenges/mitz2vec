@@ -25,7 +25,7 @@ class Node(object):
         # verify formatting
         if not len(lst):
             self.id = None
-            print "Invalid Node string:", s
+            print("Invalid Node string:", s)
             return
         
         self.id = lst[0]
@@ -36,23 +36,23 @@ class Node(object):
             # ensure 1 weight per node
             if len(lst) % 2 == 1:
                 self.id = None
-                print "Invalid weighted Node string:", s
+                print("Invalid weighted Node string:", s)
                 return
 
-            node_count = len(lst) / 2 
+            node_count = int(len(lst) / 2)
             self.outdegree = 0           
             self.dests = {}
 
             # save each node
-            for i in xrange(node_count):
+            for i in range(node_count):
                 nodeid = lst[2*i]
                 w = int(lst[2*i+1])
                 
                 self.dests[nodeid] = w
                 self.outdegree += w
-	    
-	    for k in self.dests.iterkeys():
-		self.dests[k] = float(self.dests[k]) / self.outdegree
+                
+            for k in self.dests.keys():
+                self.dests[k] = float(self.dests[k]) / self.outdegree
         else:
             self.outdegree = len(lst)
             self.dests = lst
@@ -60,19 +60,19 @@ class Node(object):
     def next(self):
         if not weighted:
             return random.choice(self.dests)
-        
-        return choice(self.dests.keys(), p=self.dests.values())
+  
+        return choice(list(self.dests.keys()), p=list(self.dests.values()))
 
 if __name__ == "__main__":
     # verify args
     if len(sys.argv) < 3:
-        print "Usage: python documentize.py adjlist.txt outfile.txt [restart_probability] [num_docs] \nDefaults: restart_probability=0.01 num_docs=10000"
+        print("Usage: python documentize.py adjlist.txt outfile.txt [restart_probability] [num_docs] \nDefaults: restart_probability=0.1 num_docs=10000")
         sys.exit(-1)
 
     in_fname = sys.argv[1]
     out_fname = sys.argv[2]
     if in_fname[-4:] != ".txt" or out_fname[-4:] != ".txt":
-        print "files must have extension '.txt'"
+        print("files must have extension '.txt'")
         sys.exit(-2)
     
     # restart probability
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     if len(sys.argv) >= 5:
         D = sys.argv[4]
     
-    print "PROCESSING GRAPH"
+    print("PROCESSING GRAPH")
     # parse infile        
     with open(in_fname) as f:
         # is the graph weighted?
@@ -101,17 +101,17 @@ if __name__ == "__main__":
                 sys.exit(-3)
             graph[node.id] = node
 
-    print "WRITING TO FILE"
+    print("WRITING TO FILE")
     # write outfile
     with open(out_fname, 'w') as f:
-	keys = graph.keys()
-        for _ in xrange(D):
+        keys = list(graph.keys())
+        for _ in range(D):
             curr = graph[random.choice(keys)]
             # probability p of restarting
-	    while random.random() > p:
+            while random.random() > p:
                 f.write(curr.id + " ")               
                 curr = curr.next()
-		if curr.id not in graph:
+                if curr not in graph:
                     break
+                curr = graph[curr]
             f.write(curr.id + " \n")
-
