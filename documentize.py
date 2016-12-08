@@ -28,7 +28,7 @@ class Node(object):
             print("Invalid Node string:", s)
             return
         
-        self.id = lst[0]
+        self.id = lst[0].strip()
         lst = lst[1:]
         
         # parse endpoints
@@ -79,17 +79,17 @@ if __name__ == "__main__":
     p = 0.01
     # num docs
     D = 10000
+    weighted = False
     if len(sys.argv) >= 4:
-        p = sys.argv[3]
+        p = float(sys.argv[3])
     if len(sys.argv) >= 5:
-        D = sys.argv[4]
+        D = int(sys.argv[4])
     
     print("PROCESSING GRAPH")
     # parse infile        
     with open(in_fname) as f:
         # is the graph weighted?
         header = f.readline().strip()
-        weighted = False
         if header == "1":
             weighted = True
 
@@ -109,9 +109,14 @@ if __name__ == "__main__":
             curr = graph[random.choice(keys)]
             # probability p of restarting
             while random.random() > p:
-                f.write(curr.id + " ")               
-                curr = curr.next()
+                f.write(curr.id)
+                try: 
+                    curr = curr.next()
+                except: 
+                    f.write('\n') 
+                    break
                 if curr not in graph:
+                    f.write('\n')
                     break
                 curr = graph[curr]
-            f.write(curr.id + " \n")
+                f.write(' ')
